@@ -17,11 +17,11 @@ function begin(){hideOverlays();state={...state,phase:'countdown',round:1,active
 function startRound(){hideOverlays();state.phase='countdown';state.phaseAt=performance.now();state.seated={};state.moves={};state.loser=null;state.bots=[];state.finishAt=0;state.greenFor=3200+Math.random()*4700;layoutChairs();$('round').textContent=`ROUND 0${state.round} / 03`;$('chairs').textContent=`${state.active.length} GUESTS · ${state.chairs.length} CHAIRS`;$('sit').disabled=true;$('pause').disabled=false;signal('','GET READY');setHint('Three, two, one… Watch the light.');roster()}
 function goGreen(now){state.phase='green';state.phaseAt=now;signal('green','KEEP WALKING');$('sit').disabled=false;$('countdown').classList.add('hidden');setHint('Hold your nerve. Wait for red.');lastBeat=0;}
 // Each rival reacts independently; later rounds are faster, never before red.
-const rivalProfiles = {1:{base:205,spread:180},2:{base:225,spread:105},3:{base:185,spread:160}};
+const rivalProfiles = {1:{base:245,spread:230},2:{base:265,spread:120},3:{base:233,spread:190}};
 function rivalDelay(id,round,rng=Math.random){
   const p=rivalProfiles[id];
-  const reaction=p.base+(rng()+rng())*.5*p.spread-(round-1)*18;
-  return Math.round(Math.max(170,reaction+(rng()<.08?70:0)));
+  const reaction=p.base+(rng()+rng())*.5*p.spread-(round-1)*14;
+  return Math.round(Math.max(190,reaction+(rng()<.08?70:0)));
 }
 function goRed(now){state.phase='red';state.phaseAt=now;state.redAt=now;state.bots=state.active.filter(i=>i!==0).map(id=>({id,at:now+rivalDelay(id,state.round)})).sort((a,b)=>a.at-b.at);signal('red','SIT NOW!');setHint('Now! Press SPACE or tap SIT.');tone(160,.25,'sawtooth',.05);canvas.classList.remove('flash');void canvas.offsetWidth;canvas.classList.add('flash')}
 function position(id){const idx=state.active.indexOf(id),a=state.angle+idx*Math.PI*2/state.active.length;return{x:480+Math.cos(a)*282,y:421+Math.sin(a)*101,a}}
